@@ -15,7 +15,6 @@ import java.util.Stack;
 @Service
 public class GestorCandidato {
 
-    // 1. Usar HashSet para impedir duplicados a nivel de lenguaje
     private final Set<Observador> observadores = new HashSet<>();
     private final Stack<CandidatoMemento> historial = new Stack<>();
     private Candidato candidatoActual;
@@ -23,7 +22,7 @@ public class GestorCandidato {
     public GestorCandidato() {
     }
 
-    // 2. Inyección de Spring hacia el Set
+   
     @Autowired(required = false)
     public void setObservadores(List<Observador> observadoresIniciales) {
         if (observadoresIniciales != null) {

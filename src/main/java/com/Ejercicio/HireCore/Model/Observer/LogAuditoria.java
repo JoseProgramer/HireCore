@@ -9,7 +9,7 @@ public class LogAuditoria implements Observador {
 
     @Override
     public void actualizar(Candidato candidato, IEstadoCandidato nuevoEstado) {
-        System.out.println(String.format(" [AUDITORÍA SYSTEM] Candidato '%s' (ID: %s) -> Estado actualizado a: %s", 
+        System.out.println(String.format("\n [AUDITORÍA SYSTEM] Candidato '%s' (ID: %s) -> Estado actualizado a: %s", 
                 candidato.getNombre(), candidato.getId(), nuevoEstado.getNombre()));
     }
 }

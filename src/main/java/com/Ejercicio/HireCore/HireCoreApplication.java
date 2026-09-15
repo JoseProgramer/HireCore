@@ -18,9 +18,10 @@ public class HireCoreApplication {
     }
 
     @Bean
-    public CommandLineRunner ejecutarPruebas(GestorCandidato gestor, 
-                                             NotificadorCorreo correo, 
-                                             LogAuditoria logAuditoria) {
+    public CommandLineRunner ejecutarPruebas(GestorCandidato gestor,
+                                            LogAuditoria logAuditoria, 
+                                             NotificadorCorreo correo
+                                             ) {
         return args -> {
 
             System.out.println("\n==========================================");
@@ -59,19 +60,18 @@ public class HireCoreApplication {
             Candidato c3 = new Candidato("3", "Luis Martínez", "luis@mail.com", "recruiter@company.com");
             gestor.setCandidatoActual(c3);
 
-            // 1. Pasa a Entrevista
+           
             gestor.cambiarEstado(c3, new Entrevista(), "admin");
 
-            // 2. Se rechaza al candidato
+            
             gestor.cambiarEstado(c3, new PruebaTecnica(), "admin");
             System.out.println("--> Estado: " + c3.getEstadoActual().getNombre());
 
-            // 3. Rollback con Memento para reabrir el proceso
+            
             System.out.println("--> Deshaciendo estado [" + c3.getEstadoActual().getNombre() + "] con Memento...");
             gestor.deshacerCambio(c3);
             System.out.println("--> Estado recuperado: " + c3.getEstadoActual().getNombre());
 
-            // 4. Continuar flujo
             gestor.cambiarEstado(c3, new PruebaTecnica(), "admin");
             gestor.cambiarEstado(c3, new VerificacionReferencias(), "admin");
             gestor.cambiarEstado(c3, new Oferta(), "admin");

@@ -67,7 +67,6 @@ public class CandidatoController {
         return ResponseEntity.ok(candidato);
     }
 
-    // Método auxiliar para instanciar la clase de estado según el string que llegue de la API
     private IEstadoCandidato mapearEstado(String nombre) {
         switch (nombre.toLowerCase()) {
             case "entrevista": return new Entrevista();
