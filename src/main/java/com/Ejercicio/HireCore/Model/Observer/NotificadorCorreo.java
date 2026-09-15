@@ -24,7 +24,7 @@ public class NotificadorCorreo implements Observador {
                 break;
         }
 
-        System.out.println(String.format("\n 📩 [CORREO ENVIADO A: %s]\n    De: reclutamiento@hirecore.com\n    Para: %s\n    Mensaje: %s", 
+        System.out.println(String.format("\n [CORREO ENVIADO A: %s]\n    De: reclutamiento@hirecore.com\n    Para: %s\n    Mensaje: %s", 
                 candidato.getCandidatoEmail(), candidato.getCandidatoEmail(), mensaje));
     }
 }

@@ -7,21 +7,23 @@ import com.Ejercicio.HireCore.Model.State.IEstadoCandidato;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.Stack;
 
 @Service
 public class GestorCandidato {
 
-    private final List<Observador> observadores = new ArrayList<>();
+    // 1. Usar HashSet para impedir duplicados a nivel de lenguaje
+    private final Set<Observador> observadores = new HashSet<>();
     private final Stack<CandidatoMemento> historial = new Stack<>();
     private Candidato candidatoActual;
 
     public GestorCandidato() {
-        // Constructor por defecto para Spring
     }
 
+    // 2. Inyección de Spring hacia el Set
     @Autowired(required = false)
     public void setObservadores(List<Observador> observadoresIniciales) {
         if (observadoresIniciales != null) {
@@ -38,7 +40,9 @@ public class GestorCandidato {
     }
 
     public void suscribir(Observador o) {
-        observadores.add(o);
+        if (o != null) {
+            observadores.add(o);
+        }
     }
 
     public void desuscribir(Observador o) {

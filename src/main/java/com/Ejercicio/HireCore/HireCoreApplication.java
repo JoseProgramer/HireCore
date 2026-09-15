@@ -1,6 +1,8 @@
 package com.Ejercicio.HireCore;
 
 import com.Ejercicio.HireCore.Model.Candidato;
+import com.Ejercicio.HireCore.Model.Observer.LogAuditoria;
+import com.Ejercicio.HireCore.Model.Observer.NotificadorCorreo;
 import com.Ejercicio.HireCore.Model.State.*;
 import com.Ejercicio.HireCore.Service.GestorCandidato;
 import org.springframework.boot.CommandLineRunner;
@@ -16,15 +18,18 @@ public class HireCoreApplication {
     }
 
     @Bean
-    public CommandLineRunner ejecutarPruebas(GestorCandidato gestor) {
+    public CommandLineRunner ejecutarPruebas(GestorCandidato gestor, 
+                                             NotificadorCorreo correo, 
+                                             LogAuditoria logAuditoria) {
         return args -> {
 
-            System.out.println("\n=======================================================");
-            System.out.println("   CASO 1: FLUJO COMPLETO DE SELECCIÓN (HASTA CONTRATADO) ");
-            System.out.println("=======================================================");
+            System.out.println("\n==========================================");
+            System.out.println(" CASO 1: FLUJO COMPLETO HASTA CONTRATADO ");
+            System.out.println("==========================================");
             
             Candidato c1 = new Candidato("1", "Carlos Pérez", "carlos@mail.com", "recruiter@company.com");
             gestor.setCandidatoActual(c1);
+            System.out.println("Estado inicial: " + c1.getEstadoActual().getNombre());
 
             gestor.cambiarEstado(c1, new Entrevista(), "admin");
             gestor.cambiarEstado(c1, new PruebaTecnica(), "admin");
@@ -32,9 +37,9 @@ public class HireCoreApplication {
             gestor.cambiarEstado(c1, new Oferta(), "admin");
             gestor.cambiarEstado(c1, new Contratado(), "admin");
 
-            System.out.println("\n=======================================================");
-            System.out.println("   CASO 2: FLUJO DE RECHAZO Y RESTRICCIÓN DE ESTADO ");
-            System.out.println("=======================================================");
+            System.out.println("\n==========================================");
+            System.out.println(" CASO 2: FLUJO DE RECHAZO ");
+            System.out.println("==========================================");
 
             Candidato c2 = new Candidato("2", "Ana Gómez", "ana@mail.com", "recruiter@company.com");
             gestor.setCandidatoActual(c2);
@@ -44,30 +49,37 @@ public class HireCoreApplication {
             try {
                 gestor.cambiarEstado(c2, new Oferta(), "admin");
             } catch (Exception e) {
-                System.out.println("\n  [SISTEMA DE SEGURIDAD] Operación no permitida: " + e.getMessage());
+                System.out.println(" [VALIDACIÓN CORRECTA] Transición bloqueada: " + e.getMessage());
             }
 
             System.out.println("\n=======================================================");
-            System.out.println("   CASO 3: DESHACER (MEMENTO) Y REANUDACIÓN DE PROCESO ");
+            System.out.println("   CASO 3: DESHACER (MEMENTO) Y RETOMAR ");
             System.out.println("=======================================================");
 
             Candidato c3 = new Candidato("3", "Luis Martínez", "luis@mail.com", "recruiter@company.com");
             gestor.setCandidatoActual(c3);
+
+            // 1. Pasa a Entrevista
             gestor.cambiarEstado(c3, new Entrevista(), "admin");
+
+            // 2. Se rechaza al candidato
             gestor.cambiarEstado(c3, new PruebaTecnica(), "admin");
+            System.out.println("--> Estado: " + c3.getEstadoActual().getNombre());
 
-            System.out.println("\n  [MEMENTO PATTERN] Se solicitó un rollback de estado para Luis Martínez...");
-            gestor.deshacerCambio(c3); 
+            // 3. Rollback con Memento para reabrir el proceso
+            System.out.println("--> Deshaciendo estado [" + c3.getEstadoActual().getNombre() + "] con Memento...");
+            gestor.deshacerCambio(c3);
+            System.out.println("--> Estado recuperado: " + c3.getEstadoActual().getNombre());
 
-            System.out.println("\n  [REANUDANDO FLUJO] Avanzando nuevamente desde el estado restaurado...");
+            // 4. Continuar flujo
             gestor.cambiarEstado(c3, new PruebaTecnica(), "admin");
             gestor.cambiarEstado(c3, new VerificacionReferencias(), "admin");
             gestor.cambiarEstado(c3, new Oferta(), "admin");
             gestor.cambiarEstado(c3, new Contratado(), "admin");
             
-            System.out.println("\n=======================================================");
-            System.out.println("     ¡TODAS LAS PRUEBAS FINALIZARON EXITOSAMENTE! ");
-            System.out.println("=======================================================\n");
+            System.out.println("\n==========================================");
+            System.out.println(" ¡TODAS LAS PRUEBAS FINALIZARON CON ÉXITO! ");
+            System.out.println("==========================================\n");
         };
     }
 }
